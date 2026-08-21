@@ -1,9 +1,14 @@
+import { cacheLife } from "next/cache";
 import getBlogs from "../service/getBlogs";
 import MyServerComponent from "../ui/MyServerComponent";
 
 const BlogsPage = async () => {
   // "use cache";
-  // cacheLife("hours");
+  cacheLife({
+    stale: 3600, // 1 hour until considered stale
+    revalidate: 7200, // 2 hours until revalidated
+    expire: 86400, // 1 day until expired
+  });
   const blogs = await getBlogs();
   return (
     <div>
