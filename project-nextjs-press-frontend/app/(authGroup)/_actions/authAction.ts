@@ -1,6 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 type LoginStatue = {
   success: true;
@@ -35,7 +36,7 @@ export const loginAction = async (
     body: JSON.stringify(payload),
   });
 
-  const result: LoginStatue = await res.json();
+  const result = await res.json();
 
   if (result.success) {
     // Store the access token and refresh token in browser cookies
@@ -52,6 +53,8 @@ export const loginAction = async (
       maxAge: 1000 * 60 * 60 * 24,
       sameSite: "lax",
     });
+
+    redirect("/dashboard");
   }
 
   return result;

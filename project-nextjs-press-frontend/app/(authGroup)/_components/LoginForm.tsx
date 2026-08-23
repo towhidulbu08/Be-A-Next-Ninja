@@ -9,11 +9,14 @@ import { loginAction } from "../_actions/authAction";
 
 const LoginForm = () => {
   const [state, action, isPending] = useActionState(loginAction, false);
+  // const router = useRouter();
 
   useEffect(() => {
     if (!state) return;
     if (state.success) {
       toast.success(state.message || "Login Successful");
+      //? Client Side Navigation
+      //router.push("/dashboard");
     }
     if (!state.success) {
       toast.error(state.message || "Login Failed");
