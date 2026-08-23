@@ -1,7 +1,9 @@
 "use server";
 
+import { cookies } from "next/headers";
+
 type LoginStatue = {
-  sccess: true;
+  success: true;
   statusCode: number;
   message: string;
   data: {
@@ -14,8 +16,8 @@ export const loginAction = async (
   previousState: LoginStatue,
   formData: FormData,
 ) => {
-  console.log("formData", formData);
-  console.log("PreviousState", previousState);
+  // console.log("formData", formData);
+  // console.log("PreviousState", previousState);
 
   const email = formData.get("email");
   const password = formData.get("password");
@@ -33,8 +35,24 @@ export const loginAction = async (
     body: JSON.stringify(payload),
   });
 
-  const result = await res.json();
+  const result: LoginStatue = await res.json();
 
-  console.log("result", result);
+  if (result.success) {
+    // Store the access token and refresh token in browser cookies
+
+    const cookieStore = await cookies();
+
+    cookieStore.set("accessToken", result.data.accessToken, {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24,
+      sameSite: "lax",
+    });
+    cookieStore.set("refreshToken", result.data.refreshToken, {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24,
+      sameSite: "lax",
+    });
+  }
+
   return result;
 };
