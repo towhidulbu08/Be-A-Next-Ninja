@@ -1,3 +1,4 @@
+import { Navbar } from "@/components/shared/navbar";
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import { DM_Sans, Outfit } from "next/font/google";
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       )}
     >
       <body className="min-h-full flex flex-col">
+        <Navbar />
         <Toaster position="top-right" />
         {children}
       </body>
