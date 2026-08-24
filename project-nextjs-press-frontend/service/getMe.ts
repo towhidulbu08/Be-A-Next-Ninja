@@ -23,6 +23,11 @@ export const getMe = async () => {
       // Authorization: `Bearer ${accessToken.value}`,
       // Cookie: `accessToken=${accessToken.value}`,
     },
+    cache: "force-cache",
+    next: {
+      revalidate: 60 * 60 * 24 * 1000,
+      tags: ["my-profile"],
+    },
   });
 
   const result = res.json();
