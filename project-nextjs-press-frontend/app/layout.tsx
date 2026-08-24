@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/shared/navbar";
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
+import { getMe } from "@/service/getMe";
 import { DM_Sans, Outfit } from "next/font/google";
 import "./globals.css";
 
@@ -12,6 +13,7 @@ const outfitHeading = Outfit({
 const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-sans" });
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
+  // const me = getMe();
   return (
     <html
       lang="en"
@@ -24,7 +26,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       )}
     >
       <body className="min-h-full flex flex-col">
-        <Navbar />
+        {/* <Navbar /> */}
         <Toaster position="top-right" />
         {children}
       </body>
