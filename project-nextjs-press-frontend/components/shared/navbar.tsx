@@ -12,7 +12,7 @@ import { logout } from "@/service/logout";
 import { LogOut, Settings, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 
@@ -65,18 +65,12 @@ export function Navbar({ user }: NavbarProps) {
   const handleUserMenuAction = async (action: string) => {
     if (action === "logout") {
       await logout();
-      setLogout(true);
-      // toast.success("User Logged Out Successfully!");
+
+      toast.success("User Logged Out Successfully!");
       router.push("/login");
     }
     console.log(`User Menu Action:${action}`);
   };
-
-  useEffect(() => {
-    if (isLogout) {
-      toast.success("User Logged Out Successfully!");
-    }
-  }, [isLogout]);
 
   return (
     <nav className="border-b border-border">

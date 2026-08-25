@@ -13,6 +13,24 @@ type LoginStatue = {
   };
 };
 
+type registerStatue = {
+  id: string;
+  name: string;
+  email: string;
+  activeStatus: string;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
+  profile: {
+    id: string;
+    profilePhoto: string;
+    bio: null | string;
+    userId: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+};
+
 export const loginAction = async (
   previousState: LoginStatue,
   formData: FormData,
@@ -56,6 +74,37 @@ export const loginAction = async (
 
     redirect("/dashboard");
   }
+
+  return result;
+};
+export const registerAction = async (
+  previousState: registerStatue,
+  formData: FormData,
+) => {
+  console.log("formData", formData);
+  console.log("PreviousState", previousState);
+
+  const email = formData.get("email");
+  const password = formData.get("password");
+  const name = formData.get("name");
+  const profilePhoto = formData.get("password");
+
+  const payload = {
+    email,
+    password,
+    name,
+    profilePhoto,
+  };
+
+  const res = await fetch(`${process.env.BACKEND_API_URL}/api/user/register`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const result = await res.json();
 
   return result;
 };
