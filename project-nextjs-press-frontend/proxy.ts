@@ -1,37 +1,72 @@
+// import { cookies } from 'next/headers';
 import { JwtPayload } from "jsonwebtoken";
+import { cookies } from "next/headers";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+import { getNewAccessToken } from "./service/refreshToken";
 import { jwtUtils } from "./utils/jwt";
 
-const Auth_Routes = ["/login", "/register"];
-
+const AUTH_ROUTES = ["/login", "/register"];
+// const PUBLIC_ROUTES = ["/", "/news", "/login", "/register"]
 const PUBLIC_ROUTES = ["/", "/news"];
 
 // This function can be marked `async` if using `await` inside
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  //  const cookieStore=await cookies()
-  //  const accessToken=cookieStore.get('accessToken')?.value
+  const cookieStore = await cookies();
+  // const accessToken = cookieStore.get("accessToken")?.value;
 
-  const accessToken = request.cookies.get("accessToken")?.value;
+  let accessToken = request.cookies.get("accessToken")?.value;
+  const refreshToken = request.cookies.get("refreshToken")?.value;
 
-  const decodedToken = accessToken
+  let decodedAccessToken = accessToken
     ? jwtUtils.verifyToken(accessToken, process.env.JWT_ACCESS_SECRET as string)
     : null;
 
-  let userRole = null;
-  if (!decodedToken?.success) {
-    //token has expired or invalid, clear the cookies
+  const decodedRefreshToken = refreshToken
+    ? jwtUtils.verifyToken(
+        refreshToken,
+        process.env.JWT_REFRESH_SECRET as string,
+      )
+    : null;
 
+  if (!decodedAccessToken?.success && decodedRefreshToken?.success) {
+    //access token has expired but refresh token is valid, get new access token from backend
+    const result = await getNewAccessToken();
+    console.log("result from proxy", result);
+
+    if (result.success) {
+      const newAccessToken = result.data.accessToken;
+
+      cookieStore.set("accessToken", newAccessToken, {
+        httpOnly: true,
+        maxAge: 60 * 60 * 24 * 1000,
+        sameSite: "lax",
+      });
+
+      accessToken = newAccessToken;
+      decodedAccessToken = jwtUtils.verifyToken(
+        accessToken!,
+        process.env.JWT_ACCESS_SECRET as string,
+      );
+    }
+  }
+
+  let userRole = null;
+
+  if (!decodedAccessToken?.success) {
+    //token has expired or is invalid, clear the cookies
     cookieStore.delete("accessToken");
-    return NextResponse.redirect(new URL("/login", request.url));
+    // return NextResponse.redirect(new URL('/login', request.url));
   }
-  if (decodedToken?.success && decodedToken.data) {
-    userRole = (decodedToken.data as JwtPayload).role;
+
+  if (decodedAccessToken?.success && decodedAccessToken.data) {
+    userRole = (decodedAccessToken.data as JwtPayload).role;
   }
-  //user already login and trying to access register and login page,redirect to dashboard
-  if (accessToken && Auth_Routes.includes(pathname)) {
+
+  //user is logged in and trying to access login or register page, redirect to dashboard or root home page
+  if (accessToken && AUTH_ROUTES.includes(pathname)) {
     if (userRole === "USER") {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     } else if (userRole === "ADMIN") {
@@ -46,16 +81,17 @@ export async function proxy(request: NextRequest) {
   const isPublicRoute = PUBLIC_ROUTES.some(
     (route) => pathname === route || pathname.startsWith(route + "/"),
   );
-  const isAuthRoute = Auth_Routes.some(
+
+  const isAuthRoute = AUTH_ROUTES.some(
     (route) => pathname === route || pathname.startsWith(route + "/"),
   );
-  // Authenticated Pages Protection:Authorization is not handled yet
+
+  // Authenticated Pages Protection : Authorization is not handled yet
   if (!accessToken && !isPublicRoute && !isAuthRoute) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  //?Authorization
-
+  // Authorization : Role based access control
   if (pathname.startsWith("/dashboard") && userRole !== "USER") {
     return NextResponse.redirect(new URL("/not-found", request.url));
   } else if (pathname.startsWith("/admin-dashboard") && userRole !== "ADMIN") {
@@ -67,18 +103,14 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/not-found", request.url));
   }
 
+  // return NextResponse.redirect(new URL('/', request.url))
   return NextResponse.next();
 }
 
-// Alternatively, you can use a default export:
-// export default function proxy(request: NextRequest) { ... }
-
 export const config = {
   matcher: [
-    // "/dashboard/:path*",
-    // "/admin-dashboard/:path*",
-    // "/author-dashboard/:path*",
-
-    "/((?!api|_next/static|_next/image|.*\\.png$).*)",
+    // '/dashboard/:path*',
+    // '/admin-dashboard/:path*',
+    "/((?!api|_next/static|favicon.ico|_next/image|.*\\.png$).*)",
   ],
 };
