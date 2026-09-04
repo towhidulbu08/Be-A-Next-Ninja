@@ -1,27 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { IPost } from "@/lib/types";
+import { getPremiumNews } from "../../_actions/getPremiumNews";
 import NewsCard from "./NewsCard";
 
-const PremiumNewsList = () => {
-  const result = {
-    success: true,
-    data: [
-      {
-        id: "1",
-        title: "Premium News 1",
-        content: "This is the content for premium news 1.",
-        thumbnail: "https://via.placeholder.com/150",
-        isFeatued: true,
-        status: "DRAFT",
-        tags: ["tag1", "tag2"],
-        views: 100,
-        isPremium: true,
-        authorId: "1",
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
-    ],
-  };
+const PremiumNewsList = async () => {
+  const result = await getPremiumNews();
 
   if (!result.success || !result.data?.length) {
     return (
@@ -33,7 +15,7 @@ const PremiumNewsList = () => {
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {result.data.map((post: IPost | any) => (
+        {result.data.map((post: IPost) => (
           <NewsCard key={post.id} post={post} />
         ))}
       </div>
