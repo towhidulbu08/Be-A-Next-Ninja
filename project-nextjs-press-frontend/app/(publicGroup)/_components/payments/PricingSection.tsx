@@ -50,8 +50,8 @@ export default async function PricingSection() {
             Support independent journalism
           </li>
         </ul>
+        {/* {isActive && <SubscribeButton />} */}
         {<SubscribeButton />}
-        {/* {<SubscribeButton />} */}
       </CardContent>
     </Card>
   );
