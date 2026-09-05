@@ -7,16 +7,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { CheckIcon } from "lucide-react";
+import { getSubscriptionStatus } from "../../_actions/getSubscriptionStatus";
 import { SubscribeButton } from "./SubscribeButton";
 
 export default async function PricingSection() {
-  const statusResult = {
-    success: true,
-    data: {
-      isSubscribed: true,
-      currentPeriodEnd: new Date().toISOString(),
-    },
-  };
+  const statusResult = await getSubscriptionStatus();
 
   const isActive = Boolean(
     statusResult?.success && statusResult.data?.isSubscribed,
@@ -50,8 +45,7 @@ export default async function PricingSection() {
             Support independent journalism
           </li>
         </ul>
-        {/* {isActive && <SubscribeButton />} */}
-        {<SubscribeButton />}
+        {!isActive && <SubscribeButton />}
       </CardContent>
     </Card>
   );
