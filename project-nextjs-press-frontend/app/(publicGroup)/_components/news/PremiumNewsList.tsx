@@ -7,9 +7,8 @@ const PremiumNewsList = async ({
 }: {
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
-  const search = await searchParams;
-  console.log("search", search);
-  const result = await getPremiumNews({ search });
+  const query = await searchParams;
+  const result = await getPremiumNews({ query });
 
   if (!result.success || !result.data?.length) {
     return (
