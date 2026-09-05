@@ -14,6 +14,9 @@ const nextConfig: NextConfig = {
       {
         hostname: "encrypted-tbn0.gstatic.com",
       },
+      {
+        hostname: "exmaple.jpg",
+      },
     ],
   },
 };
