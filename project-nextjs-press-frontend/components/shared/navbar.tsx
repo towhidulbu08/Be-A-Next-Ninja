@@ -36,22 +36,20 @@ type IUser = {
   success: boolean;
   message: string;
   data: {
+    id: string;
+    name: string;
+    email: string;
+    activeStatus: string;
+    role: string;
+    createdAt: string;
+    updatedAt: string;
     profile: {
       id: string;
-      name: string;
-      email: string;
-      activeStatus: string;
-      role: string;
+      profilePhoto: string;
+      bio: string | null;
+      userId: string;
       createdAt: string;
       updatedAt: string;
-      profile: {
-        id: string;
-        profilePhoto: string;
-        bio: string | null;
-        userId: string;
-        createdAt: string;
-        updatedAt: string;
-      };
     };
   };
 };
@@ -61,7 +59,7 @@ type NavbarProps = {
 };
 
 export function Navbar({ user }: NavbarProps) {
-  console.log("user", user?.success);
+  console.log("user", user);
   const [isLogout, setLogout] = useState(false);
   const router = useRouter();
   const handleUserMenuAction = async (action: string) => {
@@ -110,10 +108,10 @@ export function Navbar({ user }: NavbarProps) {
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col gap-1">
                     <p className="text-sm font-medium">
-                      {user?.data?.profile.name || "Tamim"}
+                      {user?.data?.name || "Tamim"}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {user?.data?.profile.email || "tamim@gmail.com"}
+                      {user?.data?.email || "tamim@gmail.com"}
                     </p>
                   </div>
                 </DropdownMenuLabel>
