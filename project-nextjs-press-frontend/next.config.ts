@@ -17,6 +17,9 @@ const nextConfig: NextConfig = {
       {
         hostname: "exmaple.jpg",
       },
+      {
+        hostname: "localhost",
+      },
     ],
   },
 };
