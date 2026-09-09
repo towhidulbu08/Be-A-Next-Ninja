@@ -8,6 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { NavbarProps } from "@/lib/types";
 import { logout } from "@/service/logout";
 import { LogOut, Settings, User } from "lucide-react";
 import Link from "next/link";
@@ -31,32 +32,6 @@ const userMenuItems = [
   { label: "Profile", icon: User, action: "profile" },
   { label: "Settings", icon: Settings, action: "settings" },
 ];
-
-type IUser = {
-  success: boolean;
-  message: string;
-  data: {
-    id: string;
-    name: string;
-    email: string;
-    activeStatus: string;
-    role: string;
-    createdAt: string;
-    updatedAt: string;
-    profile: {
-      id: string;
-      profilePhoto: string;
-      bio: string | null;
-      userId: string;
-      createdAt: string;
-      updatedAt: string;
-    };
-  };
-};
-
-type NavbarProps = {
-  user?: IUser;
-};
 
 export function Navbar({ user }: NavbarProps) {
   console.log("user", user);
