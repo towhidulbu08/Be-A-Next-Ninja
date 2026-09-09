@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { NavbarProps } from "@/lib/types";
 import { logout } from "@/service/logout";
-import { LogOut, Settings, User } from "lucide-react";
+import { LayoutDashboard, LogOut, Settings, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -29,6 +29,7 @@ const navItems = [
 
 // User menu items configuration
 const userMenuItems = [
+  { label: "DashBoard", icon: LayoutDashboard, action: "dashboard" },
   { label: "Profile", icon: User, action: "profile" },
   { label: "Settings", icon: Settings, action: "settings" },
 ];
@@ -38,6 +39,18 @@ export function Navbar({ user }: NavbarProps) {
   const [isLogout, setLogout] = useState(false);
   const router = useRouter();
   const handleUserMenuAction = async (action: string) => {
+    if (action === "dashboard") {
+      if (user.data.role === "USER") {
+        router.push("/dashboard");
+      } else if (user.data.role === "AUTHOR") {
+        router.push("/author-dashboard");
+      } else if (user.data.role === "ADMIN") {
+        router.push("/admin-dashboard");
+      }
+
+      return;
+    }
+
     if (action === "logout") {
       await logout();
 
