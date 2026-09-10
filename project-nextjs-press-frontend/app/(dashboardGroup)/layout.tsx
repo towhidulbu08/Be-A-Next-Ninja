@@ -5,6 +5,7 @@ import DashboardSidebar from "./_components/DashBoardSideBar";
 
 const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   const user = await getMe();
+  console.log("user from dashboard layout", user);
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar user={user} />

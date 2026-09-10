@@ -3,12 +3,19 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { useSearchParams } from "next/navigation";
 import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
 import { loginAction } from "../_actions/authAction";
 
 const LoginForm = () => {
-  const [state, action, isPending] = useActionState(loginAction, false);
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirectTo") ?? "";
+  const loginActionWithRedirect = loginAction.bind(null, redirectTo!);
+  const [state, action, isPending] = useActionState(
+    loginActionWithRedirect,
+    false,
+  );
   // const router = useRouter();
 
   useEffect(() => {
